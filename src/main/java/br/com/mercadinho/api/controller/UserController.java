@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.mercadinho.api.dto.AccountDTO;
 import br.com.mercadinho.api.dto.UserDTO;
 import br.com.mercadinho.domain.model.User;
-import br.com.mercadinho.domain.service.AccountService;
 import br.com.mercadinho.domain.service.UserService;
 
 @RestController
@@ -32,9 +31,6 @@ public class UserController {
 
 	@Autowired
 	private ModelMapper modelMapper;
-
-	@Autowired
-	private AccountService accountService;
 
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
