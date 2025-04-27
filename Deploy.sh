@@ -20,11 +20,25 @@ echo "🚀 Enviando o novo .jar para o servidor..."
 scp $LOCAL_JAR $SERVER_USER@$SERVER_IP:$SERVER_PATH/$JAR_NAME
 
 echo "🛑 Parando o serviço no servidor..."
-# Se já houver uma instância do app rodando, pare-a
-ssh $SERVER_USER@$SERVER_IP "pkill -f 'java -jar $SERVER_PATH/$JAR_NAME' || true"
+# Rodando o comando para matar o processo Java existente
+ssh $SERVER_USER@$SERVER_IP << EOF
+  PID=\$(ps aux | grep "java -jar $SERVER_PATH/app.jar" | grep -v grep | awk '{print \$2}')
+  if [ -n "\$PID" ]; then
+    echo "Terminando o processo com PID \$PID..."
+    kill -9 \$PID
+    echo "Processo com PID \$PID foi terminado."
+  else
+    echo "Processo não encontrado. Nenhuma aplicação Java rodando com '$SERVER_PATH/$JAR_NAME'."
+  fi
+EOF
 
 echo "✅ Substituindo o .jar e limpando versões antigas..."
-ssh $SERVER_USER@$SERVER_IP "cd $SERVER_PATH && rm -f app.jar && ln -s $JAR_NAME app.jar"
+ssh $SERVER_USER@$SERVER_IP << EOF
+  if [ -f "$SERVER_PATH/app.jar" ]; then
+    rm -f $SERVER_PATH/app.jar
+  fi
+  ln -s $SERVER_PATH/$JAR_NAME $SERVER_PATH/app.jar
+EOF
 
 echo "🎯 Iniciando o serviço novamente com nohup..."
 # Iniciar o aplicativo em segundo plano com nohup
