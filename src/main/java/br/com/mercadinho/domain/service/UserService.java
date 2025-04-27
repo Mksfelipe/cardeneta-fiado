@@ -79,11 +79,11 @@ public class UserService {
 		}
 
 		User user = new User();
-		
-		signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-
 		mapper.map(signUpRequest, user);
-
+		
+		String password = user.getFirstName().substring(0, 2).toLowerCase() + user.getCpf().substring(0, 4);
+		user.setPassword(passwordEncoder.encode(password));
+		
 		Account account = new Account();
 		user.setAccount(account);
 
