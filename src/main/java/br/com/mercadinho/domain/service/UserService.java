@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,9 @@ public class UserService {
 
 	@Autowired
 	private ModelMapper mapper;
+	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 
 	public Page<User> getAll(Pageable pageable) {
 		return userRepository.findAll(pageable);
@@ -75,6 +79,8 @@ public class UserService {
 		}
 
 		User user = new User();
+		
+		signUpRequest.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
 
 		mapper.map(signUpRequest, user);
 
