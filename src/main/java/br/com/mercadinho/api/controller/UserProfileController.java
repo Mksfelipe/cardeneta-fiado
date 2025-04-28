@@ -57,7 +57,7 @@ public class UserProfileController {
 
 	@GetMapping("/transanctions")
 	@RolesAllowed("USER")
-	public Page<TransactionDTO> getAlltransanctions(@PageableDefault(size = 10) Pageable pageable) {
+	public Page<TransactionDTO> getAlltransanctions(@PageableDefault(size = 1000) Pageable pageable) {
 
 		User user = null;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
