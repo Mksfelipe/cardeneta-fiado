@@ -1,13 +1,10 @@
 package br.com.mercadinho.api.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +21,7 @@ import br.com.mercadinho.domain.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
 
 @RestController
-@RequestMapping("api/user/profile")
+@RequestMapping("/api/user/profile")
 public class UserProfileController {
 
 	@Autowired
@@ -56,24 +53,21 @@ public class UserProfileController {
 	}
 
 	@GetMapping("/transanctions")
-	@RolesAllowed("USER")
-	public Page<TransactionDTO> getAlltransanctions(@PageableDefault(size = 1000) Pageable pageable) {
+	public List<TransactionDTO> getAllTransactions() {
 
-		User user = null;
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		// Verifica se o usuário está autenticado
-		if (authentication != null && authentication.isAuthenticated()) {
-			user = userService.findbyCpf(authentication.getName());
+	    if (authentication != null && authentication.isAuthenticated()) {
+	        User user = userService.findbyCpf(authentication.getName());
 
-			Page<Transaction> listTransactionPage = transactionService.getAll(user.getAccount().getId(), pageable);
+	        List<Transaction> transactions = transactionService.getAll(user.getAccount().getId());
 
-			List<TransactionDTO> transactionRecords = listTransactionPage.getContent().stream()
-					.map(TransactionDTO::new).toList();
-			return new PageImpl<>(transactionRecords, pageable, listTransactionPage.getTotalElements());
-		}
-		return null;
-		
+	        return transactions.stream()
+	                .map(TransactionDTO::new)
+	                .toList();
+	    }
+
+	    return Collections.emptyList(); // ou lançar exceção apropriada
 	}
 
 }

@@ -3,10 +3,6 @@ package br.com.mercadinho.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mercadinho.api.dto.TransactionDTO;
-import br.com.mercadinho.domain.model.Transaction;
 import br.com.mercadinho.domain.service.TransactionService;
 
 @RestController
@@ -36,14 +31,12 @@ public class TransactionController {
 	
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public Page<TransactionDTO> findAll(@PathVariable Long accountId,@PageableDefault(size = 10) Pageable pageable) {
-	    Page<Transaction> listTransactionPage = transactionService.getAll(accountId, pageable);
-	    
-	    List<TransactionDTO> transactionsDTO = listTransactionPage.getContent()
+	public List<TransactionDTO> findAll(@PathVariable Long accountId) {
+	    List<TransactionDTO> transactionsDTO = transactionService.getAll(accountId)
 	            .stream()
 	            .map(TransactionDTO::new).toList();
 	    
-	    return new PageImpl<>(transactionsDTO, pageable, listTransactionPage.getTotalElements());
+	    return transactionsDTO;
 	}
 	
 	@DeleteMapping("/{transactionId}")
