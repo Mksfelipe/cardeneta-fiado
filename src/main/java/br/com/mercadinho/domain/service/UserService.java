@@ -81,7 +81,8 @@ public class UserService {
 		User user = new User();
 		mapper.map(signUpRequest, user);
 		
-		String password = user.getFirstName().substring(0, 2).toLowerCase() + user.getCpf().substring(0, 4);
+		String cpfLimpo = user.getCpf().replace(".", "").replace("-", "");
+		String password = user.getFirstName().substring(0, 2).toLowerCase() + cpfLimpo.substring(0, 4);
 		System.out.println(password);
 		user.setPassword(passwordEncoder.encode(password));
 		
