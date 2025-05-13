@@ -76,11 +76,11 @@ public class User {
 	
 	@PrePersist
 	public void formatarCpf() {
-		if (this.cpf != null) {
-			// Remover tudo que não for número
-			this.cpf = this.cpf.replaceAll("[^\\d]", "");
-			// Formatar o CPF para o padrão XXX.XXX.XXX-XX
-			this.cpf = this.cpf.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
-		}
+	    if (this.cpf == null) {
+	        throw new NullPointerException("CPF não pode ser nulo");
+	    }
+	    this.cpf = this.cpf.replaceAll("[^\\d]", "")
+	                       .replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
 	}
+
 }
