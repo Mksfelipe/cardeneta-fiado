@@ -85,6 +85,7 @@ public class PaymentService {
 	    payment.setChange(accountBalanceAfterPayment.compareTo(BigDecimal.ZERO) < 0
 	        ? payment.getAmountPaid().subtract(account.getBalance())
 	        : BigDecimal.ZERO);
+	    payment.setAccount(account);
 
 	    accountService.save(account);
 	    paymentRepository.save(payment);
